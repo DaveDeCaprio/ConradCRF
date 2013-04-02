@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>Conrad Quickstart</title>
+<link href="basics.css" rel="stylesheet" type="text/css" /></head>
+
+<body>
+<h1>Quickstart</h1>
+<p>This quick start guide should get you up and running quickly using  Conrad to do basic gene prediction.&nbsp; One of the major strengths of  Conrad is its flexibility and the fact that it allows users to apply  their own data to improve the gene calling process, but right out of  the box Conrad is a state-of-the-art gene prediction program, with the  capability to call genes on a single reference sequence or to utilize  comparative data in the form of alignments of closely related species.</p>
+<p>Conrad comes packaged with trained models for several organisms.&nbsp; If  you want to call genes in one of these organisms, you can use the  trained models as is and skip the section related to training, making  the process even easier.&nbsp; If not, you will need to train the model  yourself given a trusted set of genes from your organism.&nbsp; Conrad is  easily trainable by users, and the Quickstart guide covers the entire  training and prediction process.</p>
+<h3><a name="Quickstart-InstallandVerifyConrad" id="Quickstart-InstallandVerifyConrad"></a>Install and Verify Conrad</h3>
+<p>Conrad is written in <a href="http://java.sun.com" title="Visit page outside Confluence" rel="nofollow">Java</a> and requires Java 1.5 or higher to be installed on your machine in order to run.&nbsp; If you don't have Java, <a href="http://www.java.com/getjava/" title="Visit page outside Confluence" target="_parent" rel="nofollow">download it now</a>. &nbsp;&nbsp;</p>
+<p>To get started, <a href="download.html">download Conrad</a> and unpack it into any directory.&nbsp; There is no install program,  once unpacked Conrad will be ready to run.&nbsp; Conrad comes packaged with  some sample data and models which you can use to verify that it is  working correctly.&nbsp; Thesy also serve as useful examples to help you get  started.&nbsp; To run the default model on Unix or Mac, change to the  directory where you unpacked Conrad and type:</p>
+<div class="typing">
+    bin/conrad.sh train models/singleSpecies.xml samples/validation/trainingData trainingFiles/validation.ser</div>
+<p>&nbsp;and on Windows:</p>
+<p><span class="typing">bin\conrad.bat train models/singleSpecies.xml samples/validation/trainingData <span class="Computer">trainingFiles</span>/validation.ser</span></p>
+<p>After a minute or two the file <span class="Computer">trainedModels/validation.ser</span> should be created and you should see the some output similar to the following:</p>
+<p class="computerOutput">21:36:35WARNING calhoun.analysis.crf.features.interval13.StateTransitionsInterval13.train - 7 genes, 4 introns, 1.57 exons/gene<br />
+  21:36:35WARNING calhoun.analysis.crf.statistics.MixtureOfGammas.setup - you called a mixture of gammas model but set flag to force it to model as an exponential length distribution.<br />
+  21:36:35WARNING calhoun.analysis.crf.statistics.MixtureOfGammas.setup - fewer than 20 lengths supplied for training; modeling with an exponential distribution instead of a mixture of Gammas<br />
+  21:36:35WARNING calhoun.analysis.crf.statistics.MixtureOfGammas.setup - fewer than 20 lengths supplied for training; modeling with an exponential distribution instead of a mixture of Gammas<br />
+  21:36:35WARNING calhoun.analysis.crf.statistics.MixtureOfGammas.setup - fewer than 20 lengths supplied for training; modeling with an exponential distribution instead of a mixture of Gammas<br />
+  Trained in 0.047 seconds.<br />
+  Training weights<br />
+  21:36:35WARNING calhoun.analysis.crf.solver.CacheProcessorDeluxe.setTrainingData - Discarding sequence 0 Seq #0 Pos 326 Training segment length 3 state: 1 outside the allowed length 5-5000<br />
+  21:36:35WARNING calhoun.analysis.crf.solver.CacheProcessorDeluxe.setTrainingData - Using 6 training sequences.  Discarded 1 because of state length or transition problems.<br />
+  21:36:53WARNING calhoun.analysis.crf.solver.CacheProcessorDeluxe.setTrainingData - Discarding sequence 0 Seq #0 Pos 326 Training segment length 3 state: 1 outside the allowed length 5-5000<br />
+  21:36:53WARNING calhoun.analysis.crf.solver.CacheProcessorDeluxe.setTrainingData - Using 6 training sequences.  Discarded 1 because of state length or transition problems.<br />
+  21:36:54WARNING calhoun.analysis.crf.solver.StandardOptimizer.optimize - NOTE: You ARE NOT requiring convergence of LBFGS<br />
+  21:37:00WARNING calhoun.analysis.crf.solver.StandardOptimizer.optimize - Objective value unchanged: -0.99853355 returned 1 times.<br />
+  Trained weights in 34.516 seconds.  34.562999999999995 total.<br />
+</p>
+<p>Assuming the training was successful you can go ahead and predict genes on the sample data.&nbsp; On Unix or Mac the command is:</p>
+<p><span class="typing">bin/conrad.sh predict trainingFiles/validation.ser samples/validation/testData samples/validation/output</span></p>
+<p>and on Windows:</p>
+<p><span class="typing">bin/conrad.sh predict trainingFiles/validation.ser samples/validation/testData samples/validation/output</span></p>
+<p>A GTF and a .dat file will be written to the <span class="Computer">samples/validation/output directory</span> and you should see output similar to the following:</p>
+<p class="computerOutput">Beginning test<br />
+  Testing complete<br />
+  NOTE: If you're using the CRF for prediction and pass in a dummy (e.g. all zeros) hidden<br />
+sequence, then many of the following statistics will not be meaningful<br />
+[State=intergenic] ( TP=6211, FP=0, FN=0, TN=0 ) ( AP=6211, AN=0, PP=6211, PN=0 ) ( margins not split )<br />
+[State=exon0] ( TP=0, FP=0, FN=0, TN=6211 ) ( AP=0, AN=6211, PP=0, PN=6211 ) ( margins not split )<br />
+...<br />
+[Transition intron2m --&gt; exon2m ] ( TP=0, FP=0, FN=0, TN=6202 ) ( AP=0, AN=6202, PP=0, PN=6202 ) ( margins not split )<br />
+[Transition intron2m --&gt; intron2m ] ( TP=0, FP=0, FN=0, TN=6202 ) ( AP=0, AN=6202, PP=0, PN=6202 ) ( margins not split )<br />
+[Coding nucleotides] ( TP=0, FP=0, FN=0, TN=12422 ) ( AP=0, AN=12422, PP=0, PN=12422 ) ( margins not split )<br />
+[Coding exons] ( TP=0, FP=0, FN=0 ) ( AP=0, PP=0 )( margins not split )<br />
+Perfectly predicted hidden sequences: 9/9 100.00 %<br />
+Nucleotide Hidden State Agreement: 6211/6211 100.00 %</p>
+<p>If you can successfully train and test on this validation set, then your  Conrad installation is working fine and you can begin working with your  own data.&nbsp;</p>
+<h2><a name="Quickstart-TrainingConradonaneworganism" id="Quickstart-TrainingConradonaneworganism"></a>Training Conrad on a new organism</h2>
+<h3><a name="Quickstart-Selectingamodel" id="Quickstart-Selectingamodel"></a>Selecting a model</h3>
+<p>To run Conrad on your own data you must first select a <a href="glossary.html#modelfile" title="Create Page: model file">model file</a> to use.&nbsp; A model is defined in an XML file, which is the first argument  passed to the Conrad train command.&nbsp; If you are working with a single  genome sequence (no comparative data), then you should begin with the  single species model, located at <strong>models/singleSpecies.xml</strong>.&nbsp; If you have alignments of closely related genomes, you can use the comparative mdoel located at <strong>models/comparative.xml</strong>.&nbsp; More models are available which incorporate other data types, and you can even create your own models which incorporate your own features or even change the state model used by Conrad.</p>
+<h3><a name="Quickstart-Preparingdata" id="Quickstart-Preparingdata"></a>Preparing data</h3>
+<p>Once you have selected a model, you will need to prepare a training  data set, which consists of a set of konwn genes for the organism.&nbsp;  Conrad will use these known genes to set the parameters of the model.&nbsp;  This training process is an essential part of gene prediction, and a  lot of work can go into selecting a good training set.  In general, your set should consist of at least 200 genes which you are  confident are correct.&nbsp; In typical use, there won't be long contiguous stretches of DNA where all genes are well annotated. To handle this, we recommend training on isolated gene sequences, one sequence per gene, with 200 bases of intergenic region on each side. This is how we trained Conrad during development and use it in production at the Broad Institute.</p>
+<p>If you are using the single species model, you will require two files of training data:</p>
+<ul>
+  <li><strong>ref.fasta</strong> - The DNA sequences containing the genes in the training set. The FASTA headers must correspond to sequence names in the training file. </li>
+  <li><strong>ref.gtf</strong> - A GTF or GFF3 file containing the location and structure of the genes in the sequences.</li>
+</ul>
+<p>If you are using the comparative model, you will need the two files above and two additional files:</p>
+<ul>
+  <li><strong>aln.tree</strong> - A two line text file.&nbsp; The first line must  contain a newick format phylogenetic tree for the various species  included in the alignments, with all relative branch lengths specied.&nbsp;  The second line contains the name of the species on which the genes  will be predicted.</li>
+  <li><strong>aln.mfa</strong> - A multi-fasta format  file containing a multiple alignment of all species, including the  reference.&nbsp; Each fasta header line should contain the name of the  sequence followed by a space and then the name of the species (as  specified in the tree file) for that alignment sequence.</li>
+</ul>
+<p>These files should be placed all in the same directory, and the name  of this directory will be the second argument passed to the train  command.&nbsp; For a realistic example, take a look at the <strong>samples/aspergillus/trainingData</strong> directory. </p>
+<p>Conrad's  data I/O handling is completely customizable and if you have another format for data or need to include additional data you can reconfigure Conrad to do that. See the configuration section for more details.</p>
+<h3><a name="Quickstart-Trainingthemodel" id="Quickstart-Trainingthemodel"></a>Training the model</h3>
+<p>The train command runs the actual training process.&nbsp; The train command requires an XML <a href="glossary.html#modelfile" title="Create Page: model file">model file</a>, a location for the input data and the name of the <a href="gossary.html#trainingfile" title="Create Page: training file">training file</a>.&nbsp; The <a href="glossary.html#trainingfile" title="Create Page: training file">training file</a> is a binary file containing the trained parameters for the model, and  is what you will use for testing.&nbsp; The command to run training on Unix  and Mac is:</p>
+<p class="typing">bin/conrad.sh train &lt;xml model file&gt; &lt;training data&gt; &lt;training file&gt;</p>
+<p>On Windows, replace <span class="Computer">conrad.sh</span> with <span class="Computer">conrad.bat</span>.</p>
+<p>Depending on the size of your data set and the complexity of your  model, training may anywhere from a few seconds to many hours. During  the optimization process, the Conrad training output will provide you with information on how the optimization is proceeding.</p>
+<p class="notice"><strong>Memory usage</strong><br />
+  <br />
+The default scripts that come with Conrad run it with 1G of memory.  This is enough for many problems, but large problems may require more.  Also, if your machine does not have 1G RAM you may want to lower this  value. To change it, edit the <strong>conrad.sh</strong> or <strong>conrad.bat</strong> file by changing the -Xmx1024m argument to a higher or lower number.</p>
+<h3><a name="Quickstart-Trainingthemodel" id="Quickstart-Trainingthemodel"></a>Testing the model</h3>
+<p>Often, you want to train your model given one set of known genes and then test its performance by running predictions and comparing those to another known set of genes. Conrad contains built-in funcitonality for this through it's test command. The test command requires test data set up in the same format as the training data and produces a set of accuracy and comparison statstics. The command to run testing on Unix  and Mac is:</p>
+<p class="typing">bin/conrad.sh test &lt;training file&gt; &lt;input data&gt; &lt;base filename for output&gt;</p>
+<p>On Windows, replace <span class="Computer">conad.sh</span> with <span class="Computer">conrad.bat</span>.</p>
+<h3><a name="Quickstart-Predictinggenes" id="Quickstart-Predictinggenes"></a>Predicting genes</h3>
+<p>In order to predict genes you need a <a href="glossary.html#trainingfile" title="Create Page: training file">training file</a> for your organism. The training file can be one of the pre-trained  files that Conrad ships with or a file you have trained yourself using  the step above. The prediction command takes a <a href="glossary.html#trainingfile" title="Create Page: training file">training file</a>,  a set of input data, and a base name for the output files. This data is  the same as used for training, but without the GTF file containing the  genes. The output consists of 2 files, a GTF file containing the predicted genes and a .dat file containing statistics about the process. To command  to run prediction on Unix and Mac is:</p>
+<p class="typing">bin/conrad.sh predict &lt;training file&gt; &lt;input data&gt; &lt;base filename for output  &gt;</p>
+<p>On Windows, replace conrad.sh with conrad.bat.</p>
+<h3><a name="Quickstart-Nextsteps" id="Quickstart-Nextsteps"></a>Next steps</h3>
+<p>There are man more things you can do with Conrad. It is highly  configurable. Check out some of the How Tos for more information on:</p>
+<ul>
+  <li>Configuration</li>
+  <li>Creating your own features</li>
+  <li>Adding your own input data</li>
+  <li>Using the Conrad Engine for other problems </li>
+</ul>
+</body>
+</html>

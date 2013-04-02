@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+  <bean id="inputFormat" class="calhoun.analysis.crf.io.StringInput"/>
+  <bean id="inference" class="calhoun.analysis.crf.solver.Viterbi"/>
+  <bean id="optimizer" class="calhoun.analysis.crf.solver.StandardOptimizer">
+  			<property name="starts">
+			<list>
+				<value>1.844741</value>
+				<value>-.1716978</value>
+			</list>
+  		</property>  
+	<property name="objectiveFunction" >
+  	  <bean class="calhoun.analysis.crf.solver.MaximumLikelihoodGradient" >
+		<property name="cacheProcessor">
+	  		<bean class="calhoun.analysis.crf.solver.check.AllSparseLengthCacheProcessor" />
+		</property>
+	  </bean>
+  	</property>
+  </bean>
+  <bean id="model" class="calhoun.analysis.crf.features.interval13.Interval13Model">
+	<property name="componentFeatures">
+	  <list>
+		  <bean class="calhoun.analysis.crf.features.interval13.GeneConstraintsInterval13"/>
+		  <bean class="calhoun.analysis.crf.features.interval13.ReferenceBasePredictorNodeOnlyInterval13" />
+		  <bean class="calhoun.analysis.crf.features.interval13.PWMInterval13" />
+	  </list>
+	</property>
+  </bean>
+</beans>

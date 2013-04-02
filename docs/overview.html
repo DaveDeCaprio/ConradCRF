@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>Conrad Overview</title>
+<link href="basics.css" rel="stylesheet" type="text/css" /></head>
+
+<body>
+<h1>Welcome to Conrad!</h1>
+<p><strong>What is Conrad?</strong> The <strong>Conrad gene caller</strong> is tool for predicting gene structures in DNA based on the DNA sequence and other available evidence. The gene caller uses semi-Markov Conditional Random Fields. The <strong>Conrad CRF engine</strong>is a general purpose CRF engine used by the gene caller to provide the structure and algorithms for gene calling.</p>
+<h2><a name="Home-Conradgenecaller" id="Home-Conradgenecaller"></a>Conrad gene caller</h2>
+<p>Conrad project is a robust, flexible, highly accurate gene predictor  capable of incorporating a wide variety of data useful for gene  calling. Traditionally, gene callers have been divided into <em>ab initio</em> programs that predict genes based on one or more comparative sequences  using a probabilistic model, or hueristic programs that assemble genes  from evidence such as ESTs or BLAST hits. Conrad can combine  probabilistic models with <em>ad hoc</em> evidence to combine the  strengths of these two methods. It does this by using a different  machine learning technique than traditional gene callers and employing  solid software engineering principles from the ground up to ensure  modularity and flexibility.</p>
+<p>A few of the key features of the Conrad gene caller:</p>
+<p> <img src="star_yellow.gif" alt="" align="absmiddle" border="0" height="16" width="16" /> Better accuracy HMM gene predictors<br />
+    <img src="star_yellow.gif" alt="star" align="absmiddle" border="0" height="16" width="16" /> Pre-trained models for several organisms<br />
+    <img src="star_yellow.gif" alt="star" align="absmiddle" border="0" height="16" width="16" /> Easily trainable for single genome and comparative gene prediction<br />
+    <img src="star_yellow.gif" alt="star" align="absmiddle" border="0" height="16" width="16" />Ability to handle ESTs, BLAST, and other data types<br />
+    <img src="star_yellow.gif" alt="star" align="absmiddle" border="0" height="16" width="16" />Written in Java, runs on any platform<br />
+    <img src="star_yellow.gif" alt="star" align="absmiddle" border="0" height="16" width="16" />Flexible input and output data handling<br />
+    <img src="star_yellow.gif" alt="star" align="absmiddle" border="0" height="16" width="16" />Interface to define custom features and algorithms to extend the gene caller<br />
+<img src="star_yellow.gif" alt="star" align="absmiddle" border="0" height="16" width="16" />Open source using the LGPL license </p>
+<p>Get started using the <a href="quickstart.html" title="Conrad Gene Caller">Conrad Gene Caller</a>.</p>
+<h2><a name="Home-ConradCRFengine" id="Home-ConradCRFengine"></a>Conrad CRF engine</h2>
+<p>The Conrad gene caller is built on top of the Conrad CRF engine,  which is a general purpose engine for working with semi-Markov  linear-chain conditional random fields. The engine itself contains no  gene caller specific code and can easily be applied to other domains  simply by changing the XML model file. No recompile of the engine code  is needed. The engine itself is extremely fast, since its development  has been driven by the Conrad gene caller, which must deal with  sequences with length in the millions. As a CRF engine Conrad has  several important features:</p>
+<p>     <img src="star_yellow.gif" alt="star" align="absmiddle" border="0" height="16" width="16" /> Simple interface for creating models and writing features<br />
+        <img src="star_yellow.gif" alt="star" align="absmiddle" border="0" height="16" width="16" /> Models can be reconfigured without recompiling the engine<br />
+        <img src="star_yellow.gif" alt="star" align="absmiddle" border="0" height="16" width="16" /> Uses intelligent caching strategies to achieve high performance with low memory overhead<br />
+        <img src="star_yellow.gif" alt="star" align="absmiddle" border="0" height="16" width="16" />
+        Supports arbitrary constraints for valid and invalid paths<br />
+        <img src="star_yellow.gif" alt="star" align="absmiddle" border="0" height="16" width="16" /> Handles Markov and semi-Markov CRFs<br />
+        <img src="star_yellow.gif" alt="star" align="absmiddle" border="0" height="16" width="16" /> Supports maximum likelihood and maximum expected accuracy training<br />
+<img src="star_yellow.gif" alt="star" align="absmiddle" border="0" height="16" width="16" /> Can be reconfigured with new training or caching algorithms without and recompiling</p>
+</body>
+</html>

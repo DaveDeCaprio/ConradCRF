@@ -1,0 +1,62 @@
+Gene Model Test Data Generation
+N forceGene 1 0 0 1 0 X 1
+N intergenic 0 1 0 0 .05 X 1
+N exon1 0 0 1 0 0 E 1
+N exon2 0 0 2 0 0 F 1
+N exon3 0 0 3 0 0 G 1
+N intron1 0 0 4 0 0 I 1
+N intron2 0 0 5 0 0 J 1
+N intron3 0 0 6 0 0 K 1
+N start1 0 0 1 0 0 A 1
+N start2 0 0 2 0 0 T 1
+N start3 0 0 3 0 0 G 1
+N stop1 0 0 1 0 0 T 1
+N stop2 0 0 2 0 0 A 1
+N stop3 0 0 3 0 0 G .5 A .5
+N intron1d1 0 0 4 0 0 G 1
+N intron1d2 0 0 4 0 0 T 1
+N intron1a1 0 0 4 0 0 A 1
+N intron1a2 0 0 4 0 0 G 1
+N intron2d1 0 0 5 0 0 G 1
+N intron2d2 0 0 5 0 0 T 1
+N intron2a1 0 0 5 0 0 A 1
+N intron2a2 0 0 5 0 0 G 1
+N intron3d1 0 0 6 0 0 G 1
+N intron3d2 0 0 6 0 0 T 1
+N intron3a1 0 0 6 0 0 A 1
+N intron3a2 0 0 6 0 0 G 1
+E forceGene forceGene .7
+E forceGene start1 .1
+E intergenic intergenic .7
+E intergenic start1 .1
+E start1 start2 1 
+E start2 start3 1
+E start3 exon1 1
+E exon1 exon2 .9
+E exon1 intron1d1 .1
+E exon2 exon3 .9
+E exon2 intron2d1 .1
+E exon3 exon1 .6
+E exon3 intron3d1 .1
+E exon3 stop1 .3
+E stop1 stop2 1
+E stop2 stop3 1
+E stop3 intergenic 1
+E intron1d1 intron1d2 1
+E intron1d2 intron1 1
+E intron1 intron1 .9
+E intron1 intron1a1 .1
+E intron1a1 intron1a2 1
+E intron1a2 exon2 1
+E intron2d1 intron2d2 1
+E intron2d2 intron2 1
+E intron2 intron2 .9
+E intron2 intron2a1 .1
+E intron2a1 intron2a2 1
+E intron2a2 exon3 1
+E intron3d1 intron3d2 1
+E intron3d2 intron3 1
+E intron3 intron3 .9
+E intron3 intron3a1 .1
+E intron3a1 intron3a2 1
+E intron3a2 exon1 1

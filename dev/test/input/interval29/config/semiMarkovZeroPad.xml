@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<!-- "semiMarkovZeroPad"
+	inference: semi-Markov Viterbi
+	training: standard LBFGS optimizer, MaximumLikelihoodSemiMarkovGradient, AllSparseLengthCacheProcessor
+	fanciest feature: NodeBoundary with pads set to zero
+
+	theoretically equivalent to: Markov model with fixed weights, treating the NodeBoundary feature as just a node,
+		as long as the sequence length remains less than the max lookback of 5000.
+ -->
+<beans>
+  <bean id="inputFormat" class="calhoun.analysis.crf.io.CompositeInput">
+  	<property name="components">
+		<list>
+		  <bean class="calhoun.analysis.crf.io.CompositeInput$InputComponent">
+		  	<property name="name" value="ref"/>
+		  	<property name="inputSequence"><bean class="calhoun.analysis.crf.io.StringInput"/></property>
+		  </bean>
+		</list>
+  	</property>
+  	<property name="hiddenSequenceReader">
+  		<bean class="calhoun.analysis.crf.io.IntInputInterval29"/>
+  	</property>
+  </bean>
+  <bean id="outputHandler" class="calhoun.analysis.crf.io.OutputHandlerGeneCallStatsInterval29">
+		<property name="manager" ref="model"/>
+  </bean>  
+  <bean id="inference" class="calhoun.analysis.crf.solver.SemiMarkovViterbi">
+	<property name="cacheProcessor" ref="cache"/>
+  </bean>
+  <bean id="optimizer" class="calhoun.analysis.crf.solver.StandardOptimizer">
+  		<property name="starts">
+			<list>
+				<value>1.844741</value>
+				<value>-.1716978</value>
+			</list>
+  		</property>
+  		<property name="maxIters" value="1"/>
+  		<property name="requireConvergence" value="false"/>
+	<property name="objectiveFunction" >
+  <bean class="calhoun.analysis.crf.solver.MaximumLikelihoodSemiMarkovGradient" >
+  	<!--<property name="alphaLengthFile" value="alphaLenAllSp.txt" />-->
+	<property name="cacheProcessor" ref="cache"/>
+  </bean>
+  		</property>
+  </bean>
+  <bean id="cache" class="calhoun.analysis.crf.solver.CacheProcessorDeluxe">
+	<property name="lookbackArraySize" value="5000"/>
+	<property name="lookbackArrayFeatureSize" value="3"/>
+	<property name="semiMarkovSetup">
+	  <bean id="lengths" class="calhoun.analysis.crf.SemiMarkovSetup">
+		<property name="ignoreSemiMarkovSelfTransitions" value="true"/>
+		<property name="maxLengths">
+			<list>
+				<value>5000</value>
+				<value>5000</value>
+				<value>5000</value>
+				<value>5000</value>
+				<value>5000</value>
+				<value>5000</value>
+				<value>5000</value>
+				<value>5000</value>
+				<value>5000</value>
+				<value>5000</value>
+				<value>5000</value>
+				<value>5000</value>
+				<value>5000</value> <!-- 13 -->
+				<value>2</value>
+				<value>2</value>
+				<value>2</value>
+				<value>2</value>
+				<value>2</value>
+				<value>2</value>
+				<value>2</value>
+				<value>2</value>
+				<value>2</value>
+				<value>2</value>
+				<value>2</value>
+				<value>2</value>
+				<value>2</value> <!-- 26 -->				
+				<value>2</value>
+				<value>2</value>
+				<value>2</value> <!-- 29 -->				
+			</list>
+		</property>
+		<property name="minLengths">
+			<list>
+				<value>1</value>
+				<value>1</value>
+				<value>1</value>
+				<value>1</value>
+				<value>1</value>
+				<value>1</value>
+				<value>1</value>
+				<value>1</value>
+				<value>1</value>
+				<value>1</value>
+				<value>1</value>
+				<value>1</value>
+				<value>1</value>
+				<value>2</value>
+				<value>2</value>
+				<value>2</value>
+				<value>2</value>
+				<value>2</value>
+				<value>2</value>
+				<value>2</value>
+				<value>2</value>
+				<value>2</value>
+				<value>2</value>
+				<value>2</value>
+				<value>2</value>
+				<value>2</value> <!-- 26 -->				
+				<value>2</value>
+				<value>2</value>
+				<value>2</value> <!-- 29 -->					
+			</list>			
+		</property>				
+	  </bean>
+	</property>
+  </bean>
+  <bean id="model" class="calhoun.analysis.crf.features.interval29.Interval29Model">
+	<property name="componentFeatures">
+	  <list>
+		  <bean class="calhoun.analysis.crf.features.interval29.GeneConstraintsInterval29">
+		  	<property name="inputComponent" value="ref"/>
+		  </bean>
+		  <bean class="calhoun.analysis.crf.features.interval29.ReferenceBasePredictorNodeOnlyInterval29">
+		  	<property name="inputComponent" value="ref"/>
+		  </bean>
+		  <bean class="calhoun.analysis.crf.features.interval29.PWMInterval29">
+		  	<property name="inputComponent" value="ref"/>
+		  </bean>
+		  
+	  </list>
+	</property>
+  </bean>
+</beans>

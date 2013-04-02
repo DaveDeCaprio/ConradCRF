@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+  <bean id="lengths" class="calhoun.analysis.crf.SemiMarkovSetup">
+	<property name="maxLengths">
+		<list>
+			<value>1</value>
+			<value>1</value>
+		</list>
+	</property>
+  </bean>
+  <bean id="inputFormat" class="calhoun.analysis.crf.io.StringInput"/>
+  <bean id="inference" class="calhoun.analysis.crf.solver.SemiMarkovViterbi">
+	<property name="cacheProcessor" ref="cache"/>
+  </bean>
+  <bean id="optimizer" class="calhoun.analysis.crf.solver.StandardOptimizer">
+	<property name="starts">
+		<list><value>1.0</value><value>1.0</value></list>
+	</property>
+	<property name="objectiveFunction">
+  <bean class="calhoun.analysis.crf.solver.MaximumLikelihoodSemiMarkovGradient" >
+	<property name="cacheProcessor" ref="cache"/>
+  </bean>
+	</property>
+  </bean>
+  <bean id="cache" class="calhoun.analysis.crf.solver.check.AllSparseLengthCacheProcessor">
+	<property name="semiMarkovSetup" ref="lengths"/>
+  </bean>
+  <bean id="model" class="calhoun.analysis.crf.test.ZeroOrderModel">
+	<property name="componentFeatures"><list>
+	  <bean class="calhoun.analysis.crf.test.TestFeatures$EmissionFeature" />
+	  <bean class="calhoun.analysis.crf.test.TestFeatures$ExponentialLengthFeature" />
+	</list></property>
+  </bean>
+</beans>

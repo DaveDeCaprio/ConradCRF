@@ -1,0 +1,148 @@
+P requireConvergence=true
+P maxIters=500
+P onlyValidPaths=true
+P solver=calhoun.analysis.crf.solver.SemiMarkovCRFSolver
+# P solver=calhoun.analysis.crf.solver.NullSolver
+# see below for maxStateLengths, next to the list of states
+
+I name calhoun.analysis.crf.io.NameInput
+I ref calhoun.analysis.crf.io.StringInput
+I aln calhoun.analysis.crf.io.MultipleAlignmentInput
+
+V tie
+L 1
+
+V markovhistory
+L intergenic intergenic intergenic intergenic intergenic
+L exon2 exon3 exon1 exon2 exon3
+L exon3 exon1 exon2 exon3 exon1
+L exon1 exon2 exon3 exon1 exon2
+L intron1 intron1 intron1 intron1 intron1
+L intron2 intron2 intron2 intron2 intron2
+L intron3 intron3 intron3 intron3 intron3
+L exon3m exon2m exon1m exon3m exon2m
+L exon1m exon3m exon2m exon1m exon3m
+L exon2m exon1m exon3m exon2m exon1m
+L intron1m intron1m intron1m intron1m intron1m
+L intron1m intron1m intron1m intron1m intron1m
+L intron1m intron1m intron1m intron1m intron1m
+
+V pwmgeometry
+# start signal positive strand xxxxxx|ATGxxx
+L 12 6 intergenic exon1
+# donor signal positive strand xxx|GTxxxx :
+L 9 3 exon1 intron1
+L 9 3 exon2 intron2
+L 9 3 exon3 intron3
+# acceptor signal positive strand: xxxxxxxAG|xxx :
+L 12 9 intron1 exon2
+L 12 9 intron2 exon3
+L 12 9 intron3 exon1
+# stop signal positive strand TAG|xxxxxx   NOTE: TGG cannot be ruled out as stop using a PWM
+# L 9 3 exon3 intergenic
+# start signal negative strand xxxCAT|xxxxxx
+L 12 6 exon1m intergenic
+# donor signal negative strand xxxxAC|xxx
+L 9 6 intron1m exon1m
+L 9 6 intron2m exon2m
+L 9 6 intron3m exon3m
+# acceptor signal negative strand: xxx|CTxxxxxxx
+L 12 3 exon2m intron1m
+L 12 3 exon3m intron2m
+L 12 3 exon1m intron3m
+# stop signal negative strand xxxxxx|CTA
+# L 9 6 intergenic exon3m
+
+V overlapcorrections
+# start signal positive strand xxxxxx|ATGxxx
+L intergenic intergenic intergenic intergenic intergenic intergenic exon1 exon2 exon3 exon1 exon2 exon3
+# donor signal positive strand xxx|GTxxxx :
+L exon2 exon3 exon1 intron1 intron1 intron1 intron1 intron1 intron1
+L exon3 exon1 exon2 intron2 intron2 intron2 intron2 intron2 intron2
+L exon1 exon2 exon3 intron3 intron3 intron3 intron3 intron3 intron3
+# acceptor signal positive strand: xxxxxxxAG|xxx :
+L intron1 intron1 intron1 intron1 intron1 intron1 intron1 intron1 intron1 exon2 exon3 exon1
+L intron2 intron2 intron2 intron2 intron2 intron2 intron2 intron2 intron2 exon3 exon1 exon2
+L intron3 intron3 intron3 intron3 intron3 intron3 intron3 intron3 intron3 exon1 exon2 exon3
+# stop signal positive strand TAG|xxxxxx   NOTE: TGG cannot be ruled out as stop using a PWM
+# L exon1 exon2 exon3 intergenic intergenic intergenic intergenic intergenic intergenic
+# start signal negative strand xxxCAT|xxxxxx
+L exon3m exon2m exon1m exon3m exon2m exon1m intergenic intergenic intergenic intergenic intergenic intergenic
+# donor signal negative strand xxxxAC|xxx
+L intron1m intron1m intron1m intron1m intron1m intron1m exon1m exon3m exon2m
+L intron2m intron2m intron2m intron2m intron2m intron2m exon2m exon1m exon3m
+L intron3m intron3m intron3m intron3m intron3m intron3m exon3m exon2m exon1m
+# acceptor signal negative strand: xxx|CTxxxxxxx
+L exon1m exon3m exon2m intron1m intron1m intron1m intron1m intron1m intron1m intron1m intron1m intron1m
+L exon2m exon1m exon3m intron2m intron2m intron2m intron2m intron2m intron2m intron2m intron2m intron2m
+L exon3m exon2m exon1m intron3m intron3m intron3m intron3m intron3m intron3m intron3m intron3m intron3m
+# stop signal negative strand xxxxxx|CTA
+# L intergenic intergenic intergenic intergenic intergenic intergenic exon3m exon2m exon1m
+
+V clusters
+L exon1
+L exon2
+L exon3
+L intron1 intron2 intron3
+L exon1m
+L exon2m
+L exon3m
+L intron1m intron2m intron3m
+L intergenic
+
+F calhoun.analysis.crf.features.generic.DenseWeightedEdgeFeatures ref
+F calhoun.analysis.crf.features.tricycle13.EmissionMarkovFeature ref markovhistory
+F calhoun.analysis.crf.features.tricycle13.PositionWeightMatrixFeatures ref pwmgeometry overlapcorrections markovhistory
+F calhoun.analysis.crf.features.tricycle13.CodingStopFeature ref markovhistory
+F calhoun.analysis.crf.features.tricycle13.IntronLengthFeature ref
+# F calhoun.analysis.crf.features.retired.ConservationFeatures aln tie
+# F calhoun.analysis.crf.features.retired.HandpickedConservationFeatures aln
+F calhoun.analysis.crf.features.tricycle13.FelsensteinFeatures aln clusters
+
+
+# P maxStateLengths=1,1,1,1,1,1,1,1,1,1,1,1,1
+P maxStateLengths=1,1,1,1,150,150,150,1,1,1,150,150,150
+N intergenic 1 1
+N exon1 0 0
+N exon2 0 0
+N exon3 0 0
+N intron1 0 0
+N intron2 0 0
+N intron3 0 0
+N exon1m 0 0
+N exon2m 0 0
+N exon3m 0 0
+N intron1m 0 0
+N intron2m 0 0
+N intron3m 0 0
+
+E intergenic intergenic
+E intergenic exon1
+E exon1 exon2
+E exon2 exon3
+E exon3 exon1
+E exon3 intergenic
+E exon1 intron1
+E intron1 exon2
+E exon2 intron2
+E intron2 exon3
+E exon3 intron3
+E intron3 exon1
+E intergenic exon3m
+E exon3m exon2m
+E exon2m exon1m
+E exon1m exon3m
+E exon1m intergenic
+E exon3m intron2m
+E intron2m exon2m
+E exon2m intron1m
+E intron1m exon1m
+E exon1m intron3m
+E intron3m exon3m
+# Comment out the intron-intron transitions if using explicit length model for introns
+E intron1 intron1
+E intron2 intron2
+E intron3 intron3
+E intron2m intron2m
+E intron1m intron1m
+E intron3m intron3m

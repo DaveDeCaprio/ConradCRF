@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+  <bean id="inputFormat" class="calhoun.analysis.crf.io.StringInput"/>
+  <bean id="inference" class="calhoun.analysis.crf.solver.Viterbi"/>
+  <bean id="optimizer" class="calhoun.analysis.crf.solver.StandardOptimizer">
+	<property name="requireConvergence" value="true" />
+	<property name="objectiveFunction">
+  <bean id="objectiveFunction" class="calhoun.analysis.crf.solver.MaximumLikelihoodGradient" >
+	<property name="cacheProcessor">
+	  <bean class="calhoun.analysis.crf.solver.check.AllSparseLengthCacheProcessor">
+		<property name="allPaths" value="false" />
+	  </bean>
+	</property>
+  </bean>
+	</property>
+  </bean>
+  <bean id="model" class="calhoun.analysis.crf.BeanModel">
+	<property name="componentFeatures"><list>
+	  <bean class="calhoun.analysis.crf.features.tricycle13.KmerFeatures" />
+	  <bean class="calhoun.analysis.crf.features.generic.IndicatorEdges" />
+	</list></property>
+	<property name="nodes">
+	  <list>
+		  <ref bean="lowGC" />
+		  <ref bean="highGC" />
+	  </list>
+	</property>
+	<property name="edges">
+	  <list>
+		  <bean class="calhoun.analysis.crf.BeanModel$Edge">
+			<property name="from" ref="lowGC"/>
+			<property name="to" ref="lowGC" />
+		  </bean>
+		  <bean class="calhoun.analysis.crf.BeanModel$Edge">
+			<property name="from" ref="lowGC"/>
+			<property name="to" ref="highGC" />
+		  </bean>
+		  <bean class="calhoun.analysis.crf.BeanModel$Edge">
+			<property name="from" ref="highGC"/>
+			<property name="to" ref="lowGC" />
+		  </bean>
+	  </list>
+	</property>
+  </bean>
+  <bean class="calhoun.analysis.crf.BeanModel$Node" name="lowGC">
+	<property name="index" value="0"/>
+	<property name="name" value="lowGC" />
+  </bean>
+  <bean class="calhoun.analysis.crf.BeanModel$Node" name="highGC">
+	<property name="index" value="1"/>
+	<property name="name" value="highGC" />
+  </bean>
+</beans>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<!-- "markovNoTrain"
+	inference: Viterbi
+	training: StandardOptimizer, MaximumLikelihoodGradient, AllSparseLengthCacheProcessor
+	fanciest feature: NodeBoundary with zero pads, treated here as a node
+
+	theoretically equivalent to: semiMarkovZeroPadNoTrain
+ -->
+<beans>
+  <bean id="inputFormat" class="calhoun.analysis.crf.io.StringInput"/>
+  <bean id="inference" class="calhoun.analysis.crf.solver.Viterbi"/>
+  <bean id="optimizer" class="calhoun.analysis.crf.solver.FixedWeightOptimizer">
+  </bean>
+  <bean id="model" class="calhoun.analysis.crf.features.interval13.Interval13Model">
+	<property name="componentFeatures">
+	  <list>
+		  <bean class="calhoun.analysis.crf.features.interval13.GeneConstraintsInterval13"/>
+		  <bean class="calhoun.analysis.crf.features.interval13.ReferenceBasePredictorZeroPadInterval13" />
+		  <bean class="calhoun.analysis.crf.features.interval13.PWMInterval13" />
+	  </list>
+	</property>
+  </bean>
+</beans>

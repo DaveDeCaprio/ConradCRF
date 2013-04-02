@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<!-- "markovNoTrain"
+	inference: Viterbi
+	training: StandardOptimizer, MaximumLikelihoodGradient, AllSparseLengthCacheProcessor
+	fanciest feature: NodeBoundary with zero pads, treated here as a node
+
+	theoretically equivalent to: semiMarkovZeroPadNoTrain
+ -->
+<beans>
+  <bean id="inputFormat" class="calhoun.analysis.crf.io.CompositeInput">
+  	<property name="components">
+		<list>
+		  <bean class="calhoun.analysis.crf.io.CompositeInput$InputComponent">
+		  	<property name="name" value="ref"/>
+		  	<property name="inputSequence"><bean class="calhoun.analysis.crf.io.StringInput"/></property>
+		  </bean>
+		</list>
+  	</property>
+  	<property name="hiddenSequenceReader">
+  		<bean class="calhoun.analysis.crf.io.IntInputInterval29"/>
+  	</property>
+  </bean>
+  <bean id="outputHandler" class="calhoun.analysis.crf.io.OutputHandlerGeneCallStatsInterval29">
+		<property name="manager" ref="model"/>
+  </bean>    
+  <bean id="inference" class="calhoun.analysis.crf.solver.Viterbi"/>
+  <bean id="optimizer" class="calhoun.analysis.crf.solver.FixedWeightOptimizer">
+  </bean>
+  <bean id="model" class="calhoun.analysis.crf.features.interval29.Interval29Model">
+	<property name="componentFeatures">
+	  <list>
+		  <bean class="calhoun.analysis.crf.features.interval29.GeneConstraintsInterval29">
+		  	<property name="inputComponent" value="ref"/>
+		  </bean>
+		  <bean class="calhoun.analysis.crf.features.interval29.ReferenceBasePredictorNodeOnlyInterval29">
+		  	<property name="inputComponent" value="ref"/>
+		  </bean>
+		  <bean class="calhoun.analysis.crf.features.interval29.PWMInterval29">
+		  	<property name="inputComponent" value="ref"/>
+		  </bean>
+	  </list>
+	</property>
+  </bean>
+</beans>

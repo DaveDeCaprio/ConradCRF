@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>Untitled Document</title>
+<link href="basics.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+ <h1>Features</h1>
+ <h2>Features and FeatureManagers</h2>
+ <p>Feature functions are the core of a CRF. The Conrad CRF engine defines several interfaces to create users and then contains algorithms for using those features to perform training and inference tasks. </p>
+ <p>All feature functions in Conrad are defined by a <a href="api/calhoun/analysis/crf/FeatureManager.html" target="_parent"><span class="Computer">FeatureManager</span></a> class. A <a href="api/calhoun/analysis/crf/FeatureManager.html" target="_parent"><span class="Computer">FeatureManager</span></a> can have zero or more features associated with it. Having zero features is useful for a FeatureManager that only implements constraints. Having multiple features associated with a single manager is useful for cases where several features share either code or data used for evaluation. An example is the <a href="api/calhoun/analysis/crf/features/interval13/StateLengthLogprobInterval13.html"><span class="Computer">StateLengthLogProb</span></a> feature manager, where the length distribution for each individual state is a separate function, but the functions are all evaluated using one mathematical model. Each feature is assigned a numeric id, which indicates which weight in the weight vector is assocated with that feature. All of the features associated with a single manager will have contiguous ids.</p>
+ <p>There is extensive documentation about the specifics of  implementing a <a href="api/calhoun/analysis/crf/FeatureManager.html" target="_parent"><span class="Computer">FeatureManager</span></a> in the <a href="api/calhoun/analysis/crf/FeatureManager.html" target="_parent"><span class="Computer">javadoc</span></a>. </p>
+ <h2>Types of  features</h2>
+ <p>In the mathematical definition there is only a single type of feature, but a variety of performance and technical constraints make it desirable to have several types of features for different circumstances. In Conrad, we explicitly divide features up along two different dimensions. The fist dimension is whether or not the feature function uses the the previous state to determine it's value. Those features which only use the current state are called &quot;node&quot; features. Those that use both the current and previous states are called &quot;edge&quot; features. Node features are only evaluated once for each possible state, edge features are evaluated once for each possible transition. This makes node features more efficient than edge features. </p>
+ <p>The second characteristic with which we categorize features is whether or not they use the length of the segment. Features in a semi-Markov CRF are defined over segments and we call these &quot;explicit length&quot; features. Features in a full markov CRF are defined at a single position and we call these regular features. It is possible to mix regular and explicit length features in a single model. Conrad will convert markov features into semi-Markov features by summing the value returned at each position in the segment.</p>
+ <p>When implementing a  <a href="api/calhoun/analysis/crf/FeatureManager.html" target="_parent"><span class="Computer">FeatureManager</span></a>, you must implement one of the 4 derive dinterfaces corresponding to the particular types of features. The four types are: <a href="api/calhoun/analysis/crf/FeatureManagerNode.html" target="_parent"><span class="Computer">FeatureManagerNode</span></a>, <a href="api/calhoun/analysis/crf/FeatureManagerEdge.html" target="_parent"><span class="Computer">FeatureManagerEdge</span></a>, <a href="api/calhoun/analysis/crf/FeatureManagerNode.html" target="_parent"><span class="Computer">FeatureManagerNodeExplicitLength</span></a>, and <a href="api/calhoun/analysis/crf/FeatureManagerNodeExplicitLength.html" target="_parent"><span class="Computer">FeatureManageEdgeExplicitLength</span></a>. There is also a specialized feature type called <a href="api/calhoun/analysis/crf/FeatureManagerNodeBoundaries.html" target="_parent"><span class="Computer">FeatureManagerNodeBoundaries</span></a> which handles the case of a regular markov feature that uses an alternative strategy to evaluate it's value in a semi-Markov environment. </p>
+ <h2>Cache Strategies</h2>
+ <p>Conrad is built to cache all feature evalautions so that during the training process the feature functions are not called repeatedly. This cuts the training time for Conrad and makes it tractable to train large data sets. It does this at the expense of memory, since all of the feature values must be stored in memory. Conrad uses several cache strategies to handle different type sof features and choosing the correct cache strategy is important to achieving maximal performance from Conrad. For more details on chooisng the cache strategy for a feature, see the javadoc for the <a href="api/calhoun/analysis/crf/solver/CacheProcessorDeluxe.html">CacheProcessorDeluxe</a>. </p>
+ <h2>Constraints</h2>
+ <p>In Conrad,  <a href="api/calhoun/analysis/crf/FeatureManager.html" target="_parent"><span class="Computer">FeatureManager</span></a>s can be used to implement constraints as well as evaluating feature values. Constraints restrict the set of labeling searched in the training and test process and cna be used to eliminate illegal or nonsensical labellings or to speed performance. The constraints are defined using the same categorization as the features,</p>
+ <ul>
+   <li>	<strong>node constraints</strong> declare a particular state to be invalid at a particular position</li>
+   <li><strong>edge constraints</strong> disallow a particular transition at a particular point in the sequence</li>
+   <li><strong>explicitLengthNode</strong> constraints declase that a particular segment is invalid. Overlapping, containing, and contained segments are not invalidated.</li>
+   <li><strong>explicitLengthNode</strong> constraints declase that a particular segment and previous state invalid.</li>
+ </ul>
+ <p>Constraints can be very importnat for performance. For gene calling, the node and edge constraints we use to enforce legal gene structures are absolutely necessary in order to achieve reasonable performance. Constraints are implemented simply by calling <span class="Computer">invalidate</span> on the <a href="api/calhoun/analysis/crf/FeatureList.html">FeatureList</a> passed to a feature evaluation. </p>
+ <p>&nbsp; </p>
+ <p>&nbsp;</p>
+ <p>&nbsp;</p>
+ <p>&nbsp;</p>
+ <p>&nbsp;</p>
+ <p>&nbsp;</p>
+ <p>&nbsp;</p>
+ <p>asdfasdfasdf </p>
+</body>
+</html>

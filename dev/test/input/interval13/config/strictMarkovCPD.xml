@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+  <bean id="inputFormat" class="calhoun.analysis.crf.io.StringInput"/>
+ <bean id="inference" class="calhoun.analysis.crf.solver.SemiMarkovViterbi">
+	<property name="cacheProcessor" ref="cache"/>
+  </bean>
+  <bean id="optimizer" class="calhoun.analysis.crf.solver.StandardOptimizer">
+  			<property name="starts">
+			<list>
+				<value>1.844741</value>
+				<value>-.1716978</value>
+			</list>
+  		</property>  
+	<property name="objectiveFunction" >
+  	  <bean class="calhoun.analysis.crf.solver.MaximumLikelihoodGradient" >
+		<property name="cacheProcessor" ref="cache"/>
+	  </bean>
+  	</property>
+  </bean>
+    <bean id="cache" class="calhoun.analysis.crf.solver.CacheProcessorDeluxe">
+	<property name="lookbackArraySize" value="5000"/>
+	<property name="lookbackArrayFeatureSize" value="3"/>
+	<property name="semiMarkovSetup">
+	<bean id="lengths" class="calhoun.analysis.crf.SemiMarkovSetup">
+		<property name="ignoreSemiMarkovSelfTransitions" value="true"/>
+		<property name="maxLengths">
+			<list>
+				<value>5000</value>
+				<value>5000</value>
+				<value>5000</value>
+				<value>5000</value>
+				<value>5000</value>
+				<value>5000</value>
+				<value>5000</value>
+				<value>5000</value>
+				<value>5000</value>
+				<value>5000</value>
+				<value>5000</value>
+				<value>5000</value>
+				<value>5000</value>
+			</list>
+		</property>
+				<property name="minLengths">
+			<list>
+				<value>1</value>
+				<value>1</value>
+				<value>1</value>
+				<value>1</value>
+				<value>1</value>
+				<value>1</value>
+				<value>1</value>
+				<value>1</value>
+				<value>1</value>
+				<value>1</value>
+				<value>1</value>
+				<value>1</value>
+				<value>1</value>
+			</list>
+		</property>
+	  </bean>
+	</property>
+  </bean>
+  <bean id="model" class="calhoun.analysis.crf.features.interval13.Interval13Model">
+  <property name="narrowBoundaries" value="false"/>
+	<property name="componentFeatures">
+	  <list>
+		  <bean class="calhoun.analysis.crf.features.interval13.GeneConstraintsInterval13"/>
+		  <bean class="calhoun.analysis.crf.features.interval13.ReferenceBasePredictorNodeOnlyInterval13"/>
+		  <bean class="calhoun.analysis.crf.features.interval13.PWMInterval13" />
+	  </list>
+	</property>
+  </bean>
+</beans>

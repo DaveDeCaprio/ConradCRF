@@ -1,0 +1,76 @@
+N intergenic 1 1
+N exon0 0 0
+N exon1 0 0
+N exon2 0 0
+N intron0 0 0
+N intron1 0 0
+N intron2 0 0
+N exon0m 0 0
+N exon1m 0 0
+N exon2m 0 0
+N intron0m 0 0
+N intron1m 0 0
+N intron2m 0 0
+
+# Note: There are mod-3 restrictions on where transitions can occur that are not captured in list below
+E intergenic intergenic
+E exon0 exon0
+E exon1 exon1
+E exon2 exon2
+E intron0 intron0
+E intron1 intron1
+E intron2 intron2
+E exon0m exon0m
+E exon1m exon1m
+E exon2m exon2m
+E intron0m intron0m
+E intron1m intron1m
+E intron2m intron2m
+E intergenic exon0
+E intergenic exon1
+E intergenic exon2
+E intergenic exon0m
+E intergenic exon1m
+E intergenic exon2m
+E exon0 intergenic
+E exon1 intergenic
+E exon2 intergenic
+E exon0m intergenic
+E exon1m intergenic
+E exon2m intergenic
+E exon0 intron0
+E exon0 intron1
+E exon0 intron2
+E exon1 intron0
+E exon1 intron1
+E exon1 intron2
+E exon2 intron0
+E exon2 intron1
+E exon2 intron2
+E intron0 exon0
+E intron0 exon1
+E intron0 exon2
+E intron1 exon0
+E intron1 exon1
+E intron1 exon2
+E intron2 exon0
+E intron2 exon1
+E intron2 exon2
+E exon0m intron0m
+E exon0m intron1m
+E exon0m intron2m
+E exon1m intron0m
+E exon1m intron1m
+E exon1m intron2m
+E exon2m intron0m
+E exon2m intron1m
+E exon2m intron2m
+E intron0m exon0m
+E intron0m exon1m
+E intron0m exon2m
+E intron1m exon0m
+E intron1m exon1m
+E intron1m exon2m
+E intron2m exon0m
+E intron2m exon1m
+E intron2m exon2m

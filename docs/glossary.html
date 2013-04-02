@@ -1,0 +1,23 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>Glossary</title>
+</head>
+
+<body>
+<h1>Glossary</h1>
+<p><strong><a name="conradcrfengine" id="conradcrfengine"></a> Conrad CRF engine</strong> - The generic liner chain semi-Markov CRF  infrastructure and algorithms contained within Conrad.&nbsp; These can be  used as a machine learning toolkit for using CRFs in any domain.</p>
+<p><a name="conradgenecaller" id="conradgenecaller"></a> <strong>Conrad gene caller</strong> -  The Conrad CRF engine applied to the gene calling.&nbsp; The Conrad gene  caller consists of the Conrad engine supplemented with additional data  handling utilities, a state model for gene calling, and gene calling  specific feature functions.&nbsp; The Conrad gene caller has driven the  development of the Conrad engine.</p>
+<p><a name="crf" id="crf"></a> <strong>CRF</strong> - A Conditional random field.&nbsp; See <a href="http://en.wikipedia.org/wiki/Conditional_random_field" target="_parent" >Wikipedia</a> for more.</p>
+<p><a name="features" id="features"></a> <strong>Features</strong> - Features are the  individual predictors which make up a Conrad model. Features use the  input data to provide a numerical value for a given segment, state, or  transition at each point in an input sequence.</p>
+<p><a name="gtf" id="gtf"></a> <strong>GTF </strong>- Gene Transfer Format. The default format that Conrad uses to write out gene predictions.&nbsp; See <a href="http://en.wikipedia.org/wiki/Gene_transfer_format" title="http://en.wikipedia.org/wiki/Gene transfer format" target="_parent" >Wikipedia</a> for more.</p>
+<p><a name="inference" id="inference"></a> <strong>Inference</strong> - In <a href="#machinelearning">machine learning</a>, inference is the process of deriving conclusions or making predictions based on existing information.&nbsp; See <a href="http://en.wikipedia.org/wiki/Inference" target="_parent" >Wikipedia</a> for more.</p>
+<p><a name="machinelearning" id="machinelearning"></a> <strong>Machine Learning</strong> -  Machine learning is a branch of computer science covering software that  uses data to improve it's accuracy at some given task.&nbsp; Conrad uses <a href="#supervisedlearning" title="supervised learning on Glossary">supervised learning</a>, which is one component of machine learning.&nbsp;  See <a href="http://en.wikipedia.org/wiki/Supervised_learning" target="_parent" >Wikipedia</a> for more.</p>
+<p><a name="modelfile" id="modelfile"></a> <strong>Model file</strong> - A model file  is an XML file that configures the Conrad engine for a particular  problem.&nbsp; It describes the input data, output data, <a href="features" title="features on Glossary">features</a>, <a href="statemodel" title="state model on Glossary">state model</a>, and <a href="inference" title="inference on Glossary">inference</a>, and <a href="optimization" title="optimization on Glossary">optimization</a>.&nbsp; When Conrad is trained takes a model and a set of training data to produce a <a href="trainingFile" title="TrainingFile on Glossary">training file</a>.</p>
+<p><a name="supervisedlearning" id="supervisedlearning"></a> <strong>Supervised learning</strong> - A <a href="#machinelearning" title="machine learning on Glossary">machine learning</a> technique whereby a system uses a set of <a href="#trainingexamples" title="training examples on Glossary">training examples</a> to learn how to correctly perform a task.&nbsp; In the case of Conrad Gene  Prediction, the training examples are correctly predicted genes.&nbsp; See <a href="http://en.wikipedia.org/wiki/Supervised_learning" target="_parent" >Wikipedia</a> for more.</p>
+<p><a name="trainingexamples" id="trainingexamples"></a> <strong>Training examples</strong> - Training data is a set of <a href="inputdata" title="input data on Glossary">input data</a> for a model along with a set of correct &quot;answers&quot;.&nbsp; Conrad uses the  training data to set the parameters of the model correctly.</p>
+<p><a name="trainingfile" id="trainingfile"></a> <strong>Training file</strong> - A training file is a binary file produced when Conrad parameterizes a <a href="#modelfile" title="model file on Glossary">model file</a> on a given set of <a href="#trainingexamples" title="training examples on Glossary">training examples</a>.</p>
+<p>&nbsp; </p>
+</body>
+</html>

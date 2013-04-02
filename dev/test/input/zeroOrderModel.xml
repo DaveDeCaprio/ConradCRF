@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+  <bean id="inputFormat" class="calhoun.analysis.crf.io.StringInput"/>
+  <bean id="inference" class="calhoun.analysis.crf.solver.Viterbi"/>
+  <bean id="optimizer" class="calhoun.analysis.crf.solver.StandardOptimizer">
+	<property name="requireConvergence" value="false" />
+	<property name="objectiveFunction">
+  <bean class="calhoun.analysis.crf.solver.MaximumLikelihoodGradient" >
+	<property name="cacheProcessor">
+	  <bean class="calhoun.analysis.crf.solver.NoCachingCacheProcessor" />
+	</property>
+  </bean>
+	</property>
+  </bean>
+  <bean id="model" class="calhoun.analysis.crf.test.ZeroOrderModel">
+	<property name="componentFeatures"><list>
+	  <bean class="calhoun.analysis.crf.features.tricycle13.KmerFeatures" />
+	  <bean class="calhoun.analysis.crf.features.generic.IndicatorEdges" />
+	</list></property>
+  </bean>
+</beans>

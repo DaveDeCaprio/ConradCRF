@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+  <bean id="inputFormat" class="calhoun.analysis.crf.io.CompositeInput">
+  	<property name="components">
+		<list>
+		  <bean class="calhoun.analysis.crf.io.CompositeInput$InputComponent">
+		  	<property name="name" value="ref"/>
+		  	<property name="inputSequence">
+			  	<bean class="calhoun.analysis.crf.io.StringInput"/>
+		  	</property>
+		  </bean>
+		</list>
+  	</property>
+  </bean>
+  <bean id="inference" class="calhoun.analysis.crf.solver.Viterbi"/>
+  <bean id="optimizer" class="calhoun.analysis.crf.solver.StandardOptimizer">
+	<property name="maxIters" value="1"/>
+	<property name="requireConvergence" value="false" />
+  </bean>
+  <bean id="objectiveFunction" class="calhoun.analysis.crf.solver.MaximumLikelihoodGradient" >
+	<property name="cacheProcessor">
+	  <bean id="cache" class="calhoun.analysis.crf.solver.check.AllSparseLengthCacheProcessor" />
+	</property>
+  </bean>
+  <bean id="model" class="calhoun.analysis.crf.BeanModel">
+	<property name="componentFeatures">
+	  <list>
+		  <bean class="calhoun.analysis.crf.features.generic.StartFeatures"/>
+		  <bean class="calhoun.analysis.crf.features.generic.EndFeatures" />
+		  <bean class="calhoun.analysis.crf.features.generic.WeightedEdges" />
+			  <bean class="calhoun.analysis.crf.features.tricycle13.EmissionMarkovFeature" >
+		  	<property name="inputComponent" value="ref"/>
+				<property name="history">
+			  <bean class="calhoun.analysis.crf.features.tricycle13.EmissionMarkovFeature$MarkovHistory" >
+				<property name="states">
+		  			<list>
+		  				<list>
+		  					<ref bean="intergenic"/>
+			  					<ref bean="intergenic"/>
+			  					<ref bean="intergenic"/>
+		  					<ref bean="intergenic"/>
+		  					<ref bean="intergenic"/>
+		  				</list>
+			  				<list>
+		  					<ref bean="exon2"/>
+			  					<ref bean="exon3"/>
+		  					<ref bean="exon1"/>
+		  					<ref bean="exon2"/>
+		  					<ref bean="exon3"/>
+		  				</list>
+			  				<list>
+		  					<ref bean="exon3"/>
+		  					<ref bean="exon1"/>
+		  					<ref bean="exon2"/>
+			  					<ref bean="exon3"/>
+			  					<ref bean="exon1"/>
+			  				</list>
+		  				<list>
+			  					<ref bean="exon1"/>
+			  					<ref bean="exon2"/>
+			  					<ref bean="exon3"/>
+		  					<ref bean="exon1"/>
+		  					<ref bean="exon2"/>
+		  				</list>
+		  				<list>
+		  					<ref bean="intron1"/>
+		  					<ref bean="intron1"/>
+		  					<ref bean="intron1"/>
+		  					<ref bean="intron1"/>
+		  					<ref bean="intron1"/>
+		  				</list>
+		  				<list>
+		  					<ref bean="intron2"/>
+			  					<ref bean="intron2"/>
+		  					<ref bean="intron2"/>
+			  					<ref bean="intron2"/>
+		  					<ref bean="intron2"/>
+		  				</list>
+		  				<list>
+			  					<ref bean="intron3"/>
+			  					<ref bean="intron3"/>
+		  					<ref bean="intron3"/>
+			  					<ref bean="intron3"/>
+		  					<ref bean="intron3"/>
+		  				</list>
+		  			</list>
+					</property>
+				</bean>
+		  	</property>
+		  </bean>
+		<bean class="calhoun.analysis.crf.features.tricycle13.KmerFeatures">
+		  	<property name="inputComponent" value="ref"/>
+			<property name="kmerDefinitions">
+	  			<list>
+	  				<list>
+	  					<value type="int">0</value>
+	  				</list>
+	  				<list>
+	  					<value type="int">0</value>
+	  					<value type="int">-1</value>
+	  				</list>
+	  				<list>
+	  					<value type="int">0</value>
+	  					<value type="int">-1</value>
+	  					<value type="int">-2</value>
+	  					<value type="int">-3</value>
+	  				</list>
+	  				<list>
+	  					<value type="int">0</value>
+	  					<value type="int">-1</value>
+	  					<value type="int">-2</value>
+	  					<value type="int">-3</value>
+	  					<value type="int">-4</value>
+	  				</list>
+	  			</list>
+			</property>
+		</bean>
+	  </list>
+	</property>
+	<property name="nodes">
+	  <list>
+		  <ref bean="intergenic" />
+		  <ref bean="exon1" />
+		  <ref bean="exon2" />
+		  <ref bean="exon3" />
+		  <ref bean="intron1" />
+		  <ref bean="intron2" />
+		  <ref bean="intron3" />
+	  </list>
+	</property>
+	<property name="edges">
+	  <list>
+		  <bean class="calhoun.analysis.crf.BeanModel$Edge">
+			<property name="from" ref="intergenic"/>
+			<property name="to" ref="intergenic" />
+		  </bean>
+		  <bean class="calhoun.analysis.crf.BeanModel$Edge">
+			<property name="from" ref="intergenic"/>
+			<property name="to" ref="exon1" />
+		  </bean>
+		  <bean class="calhoun.analysis.crf.BeanModel$Edge">
+			<property name="from" ref="exon1"/>
+			<property name="to" ref="exon2" />
+		  </bean>
+		  <bean class="calhoun.analysis.crf.BeanModel$Edge">
+			<property name="from" ref="exon2"/>
+			<property name="to" ref="exon3" />
+		  </bean>
+		  <bean class="calhoun.analysis.crf.BeanModel$Edge">
+			<property name="from" ref="exon3"/>
+			<property name="to" ref="exon1" />
+		  </bean>
+		  <bean class="calhoun.analysis.crf.BeanModel$Edge">
+			<property name="from" ref="exon3"/>
+			<property name="to" ref="intergenic" />
+		  </bean>
+		  <bean class="calhoun.analysis.crf.BeanModel$Edge">
+			<property name="from" ref="exon1"/>
+			<property name="to" ref="intron1" />
+		  </bean>
+		  <bean class="calhoun.analysis.crf.BeanModel$Edge">
+			<property name="from" ref="intron1"/>
+			<property name="to" ref="intron1" />
+		  </bean>
+		  <bean class="calhoun.analysis.crf.BeanModel$Edge">
+			<property name="from" ref="intron1"/>
+			<property name="to" ref="exon2" />
+		  </bean>
+		  <bean class="calhoun.analysis.crf.BeanModel$Edge">
+			<property name="from" ref="exon2"/>
+			<property name="to" ref="intron2" />
+		  </bean>
+		  <bean class="calhoun.analysis.crf.BeanModel$Edge">
+			<property name="from" ref="intron2"/>
+			<property name="to" ref="intron2" />
+		  </bean>
+		  <bean class="calhoun.analysis.crf.BeanModel$Edge">
+			<property name="from" ref="intron2"/>
+			<property name="to" ref="exon3" />
+		  </bean>
+		  <bean class="calhoun.analysis.crf.BeanModel$Edge">
+			<property name="from" ref="exon3"/>
+			<property name="to" ref="intron3" />
+		  </bean>
+		  <bean class="calhoun.analysis.crf.BeanModel$Edge">
+			<property name="from" ref="intron3"/>
+			<property name="to" ref="intron3" />
+		  </bean>
+		  <bean class="calhoun.analysis.crf.BeanModel$Edge">
+			<property name="from" ref="intron3"/>
+			<property name="to" ref="exon1" />
+		  </bean>
+	  </list>
+	</property>
+  </bean>
+  <bean class="calhoun.analysis.crf.BeanModel$Node" name="intergenic">
+	<property name="index" value="0"/>
+	<property name="name" value="intergenic" />
+  </bean>
+  <bean class="calhoun.analysis.crf.BeanModel$Node" name="exon1">
+	<property name="index" value="1"/>
+	<property name="name" value="exon1" />
+  </bean>
+  <bean class="calhoun.analysis.crf.BeanModel$Node" name="exon2">
+	<property name="index" value="2"/>
+	<property name="name" value="exon2" />
+  </bean>
+  <bean class="calhoun.analysis.crf.BeanModel$Node" name="exon3">
+	<property name="index" value="3"/>
+	<property name="name" value="exon3" />
+  </bean>
+  <bean class="calhoun.analysis.crf.BeanModel$Node" name="intron1">
+	<property name="index" value="4"/>
+	<property name="name" value="intron1" />
+  </bean>
+  <bean class="calhoun.analysis.crf.BeanModel$Node" name="intron2">
+	<property name="index" value="5"/>
+	<property name="name" value="intron2" />
+  </bean>
+  <bean class="calhoun.analysis.crf.BeanModel$Node" name="intron3">
+	<property name="index" value="6"/>
+	<property name="name" value="intron3" />
+  </bean>
+</beans>

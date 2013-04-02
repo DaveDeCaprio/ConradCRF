@@ -1,0 +1,95 @@
+<project name="CRF" default="package" basedir=".">
+	<description>
+        crf tool build file
+    </description>
+
+	<!-- set global properties for this build -->
+	<property name="version" value="1"/>
+	<property name="src" location="src"/>
+	<property name="build" location="build"/>
+	<property name="lib" location="lib"/>
+	<property name="doc" location="doc"/>
+
+	<property name="compile.debug" value="true"/>
+
+	<path id="runtime.classpath">
+		<pathelement location="lib/commons-logging.jar"/>
+		<pathelement location="lib/LBFGS.jar"/>
+		<pathelement location="lib/colt.jar"/>
+		<pathelement location="lib/spring-1.2.6.jar"/>
+		<pathelement location="lib/commons-lang-2.1.jar"/>
+		<pathelement location="lib/dom4j.jar"/>
+		<pathelement location="lib/jcommon-1.0.6.jar"/>
+		<pathelement location="lib/jfreechart-1.0.3.jar"/>
+		<pathelement location="lib/commons-math-1.1.jar"/>
+	</path>
+
+	<path id="compile.classpath">
+		<path refid="runtime.classpath"/>
+		<pathelement location="lib/junit.jar"/>
+	</path>
+
+	<target name="compile" description="compile the source " >
+		<!-- Compile the java code from ${src} into ${build} -->
+		<mkdir dir="${build}"/>
+		<javac srcdir="${src}" destdir="${build}" debug="${compile.debug}" source="1.5"  classpathref="compile.classpath"/>
+	</target>
+
+	<target name="doc" description="Build javadoc" >
+		<mkdir dir="${build}/docs/api"/>
+		  <javadoc packagenames="calhoun.*"
+		  			classpathref="compile.classpath"
+				   sourcepath="src"
+				   excludepackagenames="calhoun.analysis.crf.solver.check,calhoun.analysis.crf.executables,calhoun.analysis.crf.executables.test,com.analysis.crf.test.slow"
+				   defaultexcludes="yes"
+				   destdir="${build}/docs/api"
+				   version="true"
+				   public="true"
+				   Use="true"
+		  		   linksource="yes"
+				   breakiterator="yes"
+		  	       source="1.5"
+				   windowtitle="Conrad javadoc">
+			<group title="Conrad engine" packages="calhoun.analysis.crf,calhoun.analysis.crf.executables.viewer,calhoun.analysis.crf.features.generic,calhoun.analysis.crf.executables,calhoun.analysis.crf.solver"/>
+			<group title="Conrad gene caller" packages="calhoun.analysis.crf.io,calhoun.analysis.crf.features.*,calhoun.analysis.crf.scoring"/>
+		  </javadoc>
+  	</target>
+
+	<target name="package" description="create the jar" >
+		<!-- Compile the java code from ${src} into ${build} -->
+		<mkdir dir="${build}/docs"/>
+		<jar jarfile="conrad.jar" basedir="${build}">
+			<include name="calhoun/**"/>
+			<include name="bmsi/**"/>
+			<include name="flanagan/**"/>
+			<manifest>
+				<attribute name="Main-Class" value="calhoun.analysis.crf.Conrad"/>
+				<attribute name="Class-Path" value="spring-1.2.6.jar colt.jar LBFGS.jar dom4j.jar commons-lang-2.1.jar commons-logging.jar"/>
+			</manifest>
+		</jar>
+		<zip zipfile="conrad.zip">
+		    <zipfileset dir="dist"/>
+		    <zipfileset file="conrad.jar" prefix="lib"/>
+		    <zipfileset dir="build/docs" prefix="docs"/>
+		</zip>
+		<zip zipfile="conradSrc.zip">
+		    <zipfileset dir="dist"/>
+		    <zipfileset file="conrad.jar" prefix="lib"/>
+		    <zipfileset dir="build/docs" prefix="docs"/>
+		    <zipfileset dir="site" />
+		    <zipfileset dir="src" prefix="dev/src"/>
+		    <zipfileset dir="test" prefix="dev/test" includes="input/** output/** working"/>
+		    <zipfileset dir="lib" prefix="dev/lib"/>
+		    <zipfileset dir=".externalToolBuilders" prefix="dev/.externalToolBuilders"/>
+		    <zipfileset file=".project" prefix="dev"/>
+		    <zipfileset file=".classpath" prefix="dev"/>
+		    <zipfileset file="build.xml" prefix="dev"/>
+		    <zipfileset file="log4j.properties" prefix="dev"/>
+		</zip>
+		<copy todir="build/site"><fileset dir="site/docs"/></copy>
+		<copy todir="build/site"><fileset dir="build/docs"/></copy>
+		<copy tofile="build/site/conradV${version}.zip" file="conrad.zip"/>
+		<copy tofile="build/site/conradSrcV${version}.zip" file="conradSrc.zip"/>
+	</target>
+
+</project>

@@ -1,0 +1,175 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>Conrad Configuration</title>
+<link href="basics.css" rel="stylesheet" type="text/css" /></head>
+
+<body>
+<h2>About the model file</h2>
+<p>Conrad uses a model file to control its behavior. The default models that come with Conrad provide basic gene calling behavior, but those models can be edited to enhance the gene calling with additional features and data or can be replaced entirely to use Conrad for an entirely different problem. The model file  specifies:</p>
+<ul>
+  <li>The specific states in the state model and the allowable transitions between them</li>
+  <li>The format of the input data</li>
+  <li>The format of the output data</li>
+  <li>The specific <a href="glossary.html#features" title="features on Glossary">features</a> used in the CRF.</li>
+  <li>The solving algorithms to use and any parameters associated iwth the optimization.</li>
+</ul>
+<h2><a name="Configuration-Editingthemodelfile" id="Configuration-Editingthemodelfile"></a>An example model file</h2>
+<p>The <a href="glossary.html#modelfile" title="Create Page: Gloassary">model file</a> is an XML file that uses the Java <a href="http://www.springframework.org/"  target="_parent" rel="nofollow">Spring</a> configuration language and can be edited in any regular text editor.  If you are not familiar with XML, you should learn <a href="http://www.online-learning.com/demos/xml/well_formed_xml.html"  target="_parent" rel="nofollow">about well-formed XML documents</a> before editing the model file.</p>
+<p>The Conrad model file describes a set of objects that Conrad uses to define the CRF model and algorithms. Each object also contains configuration information that describes the specifics of how that object should operate. The configuration file allows you to specify different objects to use and therefore change the behavior of Conrad. This allows almost all of the internals of Conrad to be changed  just from the model file without changing code or recompiling anything  inside Conrad itself. The objects that Conrad reads for the configuration file are:</p>
+<ul>
+  <li><strong>inputHandler</strong> - Specifies where to locate the input data, what format it is in, and how to read it. This includes the data for both training and prediction. </li>
+  <li><strong>outputHandler</strong> - Specifies how to handle the Conrad's output, including the case of testing against a known set of predictions. </li>
+  <li><strong>inference </strong>- Specifies the CRF inference algorithm Conrad should use. </li>
+  <li><strong>optimizer - </strong>Specifies the CRF training algorithm Conrad should use. </li>
+  <li><strong>model </strong>- Specifies the hidden states, their valid transitions, and the feature functions used in the CRF. </li>
+</ul>
+<p>Each object is implemented by a Java class which implements a specific Java interface defined by Conrad. The configuration of each object is handled by defining Java properties on the class which are set when the object is created. These properties can be simple data types like numbers and text, or more complicated objects in and of themselves. </p>
+<p>Model files may be very simple or very complicated, depending on how  much configuration they include. In this section we will walk through the basic gene calling model provided  with Conrad, <strong>singleSpecies.xml</strong>, which contains a signfiicant amount of configuration information and demonstrates the power of this technique.</p>
+<p class="computerOutput">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;<br />
+&lt;!DOCTYPE beans PUBLIC &quot;-//SPRING//DTD BEAN//EN&quot; &quot;http://www.springframework.org/dtd/spring-beans.dtd&quot;&gt;<br />
+&lt;beans&gt;<br />
+ &nbsp;&nbsp;&lt;bean id=&quot;inputHandler&quot; class=&quot;calhoun.analysis.crf.io.InputHandlerDirectory&quot;&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;property name=&quot;inputReaders&quot;&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;map&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;entry&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;key&gt;&lt;value&gt;ref.fasta&lt;/value&gt;&lt;/key&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;bean class=&quot;calhoun.analysis.crf.io.FastaInput&quot;&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;property name=&quot;header&quot; value=&quot;name&quot;/&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;property name=&quot;sequence&quot; value=&quot;ref&quot;/&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/bean&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/entry&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/map&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;/property&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;property name=&quot;hiddenSequenceFile&quot; value=&quot;ref.gtf&quot; /&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;property name=&quot;hiddenStateReader&quot;&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp; &lt;bean class=&quot;calhoun.analysis.crf.io.GTFInputInterval13&quot;/&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;/property&gt;<br />
+&nbsp;&nbsp;&lt;/bean&gt;</p>
+<p>The first several lines are boilerplate XML text that is present at the beginning of each model file. The real content starts on line 4 with the definition of the first object, or bean, <strong>inputHandler</strong>. In this case, the inputHandler is specified as an <span class="Computer"><a  target="_parent" href="api/calhoun/analysis/crf/io/InputHandlerDirectory.html">InputHandlerDirectory</a></span>, which means that the training and prediction data will be contained in a set of files all consistently named within the same directory. Other inputHandler objects define different policies, and any class can be used that implements the <a  target="_parent" href="api/calhoun/analysis/crf/io/InputHandler.html"><span class="Computer">InputHandler</span></a> interface. Another example is <a  target="_parent" href="api/calhoun/analysis/crf/io/InputHandlerFile.html"><span class="Computer">InputHandlerFile</span></a> that reads all data from a single file.. </p>
+<p>The first piece of configuration for the input handler is a property called <strong>inputReaders</strong>. This property is a map that associates filenames within the data directory with a particular class used to read the data in from that file. In this case, a <a  target="_parent" href="api/calhoun/analysis/crf/io/FastaInput.html"><span class="Computer">FastaInput</span></a> object will be used to read in the file called <span class="Computer">ref.fasta</span>. This is an example of a property that is configured with another object. Reading the javadoc for <span class="Computer">FastaInput</span> shows that it creates two input components, one for the header information in the fasta file, and another for the sequence. These input components are the actual observations that are accessed by the features. We will see more on this later when we examine the feature configuration. Also so the I/O guide.</p>
+<p>A second property of the input handler configuration is the <strong>hiddenSequenceFile </strong> this indicates that the hidden sequence (correct gene positions) for the training data will be contained in a file called <span class="Computer">ref.gtf</span>. The format of the file is controlled by the <strong>hiddenStateReader</strong> property which indicates that the genes will be stored as GTF and read in using the <a  target="_parent" href="api/calhoun/analysis/crf/io/GTFInputInterval13.html"><span class="Computer">GTFInputInterval13</span></a> class.</p>
+<p class="computerOutput">&nbsp;&nbsp;&lt;bean id=&quot;outputHandler&quot; class=&quot;calhoun.analysis.crf.io.OutputHandlerGeneCallStats&quot;&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&lt;property name=&quot;inputHandler&quot; ref=&quot;inputHandler&quot;/&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&lt;property name=&quot;manager&quot; ref=&quot;model&quot;/&gt;<br />
+  &nbsp;&nbsp;&lt;/bean&gt;</p>
+<p>The beans be defined in any order, as long as they have the proper <span class="Computer">id</span>'s. The order presented here is just the one used in the example files. The next section of the file specifies the <strong>outputHandler</strong>.  The output handler must implement the <a  target="_parent" href="api/calhoun/analysis/crf/io/OutputHandler.html" class="Computer">OutputHandler</a> interface. In this example, the handler is the class <a  target="_parent" href="api/calhoun/analysis/crf/io/OutputHandlerGeneCallStats.html"><span class="Computer">OutputHandlerGeneCallStats</span></a>. This class writes out the results as a <a href="glossary.html#gtf">GTF file</a> and calculates several specific statistics related to gene calling. This output handler must be configured with information about the model and about the input formats. Note that other objects defined in the configuration file can be referenced, as the <span class="Computer">inputHandler</span> and <span class="Computer">model</span> objects are here.</p>
+<p class="computerOutput">&nbsp;&nbsp;&lt;bean id=&quot;inference&quot; class=&quot;calhoun.analysis.crf.solver.SemiMarkovViterbi&quot;&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&lt;property name=&quot;cacheProcessor&quot; ref=&quot;cache&quot;/&gt;<br />
+  &nbsp;&nbsp;&lt;/bean&gt;</p>
+<p>The next object, <strong>inference</strong>, must implement the <a  target="_parent" href="api/calhoun/analysis/crf/CRFInference.html"><span class="Computer">CRFInference</span></a> interface. Two inference algorithms currently exist, <a  target="_parent" href="api/calhoun/analysis/crf/solver/Viterbi.html"><span class="Computer">Viterbi</span></a> and <a  target="_parent" href="api/calhoun/analysis/crf/solver/SemiMarkovViterbi.html"><span class="Computer">SemiMarkovViterbi</span></a>. The latter must be used if segment features (explicit length) are present in the model. The <a  target="_parent" href="api/calhoun/analysis/crf/solver/SemiMarkovViterbi.html"><span class="Computer">SemiMarkovViterbi</span></a> algorithm requires a cache processor. This is an object that is used to store the results of feature functions for quick access during training. The <strong>cacheProcessor</strong>object is defined below, as it is shared by the inference and optimizer objects.</p>
+<p class="computerOutput">&nbsp;&nbsp;&lt;bean id=&quot;optimizer&quot; class=&quot;calhoun.analysis.crf.solver.TwoPassOptimizer&quot;&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&lt;property name=&quot;firstPass&quot;&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;bean class=&quot;calhoun.analysis.crf.solver.StandardOptimizer&quot;&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;property name=&quot;objectiveFunction&quot;&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;bean class=&quot;calhoun.analysis.crf.solver.MaximumLikelihoodSemiMarkovGradient&quot; &gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;property name=&quot;cacheProcessor&quot; ref=&quot;cache&quot;/&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/bean&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/property&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/bean&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&lt;/property&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&lt;property name=&quot;secondPass&quot;&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;bean class=&quot;calhoun.analysis.crf.solver.StandardOptimizer&quot;&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;property name=&quot;requireConvergence&quot; value=&quot;false&quot;/&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;property name=&quot;objectiveFunction&quot;&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;bean class=&quot;calhoun.analysis.crf.solver.MaximumExpectedAccuracySemiMarkovGradient&quot; &gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;property name=&quot;cacheProcessor&quot; ref=&quot;cache&quot;/&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;property name=&quot;score&quot;&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;bean class=&quot;calhoun.analysis.crf.scoring.SimScoreStateAndExonBoundariesInt13&quot;/&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/property&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/bean&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/property&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/bean&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&lt;/property&gt;<br />
+  &nbsp;&nbsp;&lt;/bean&gt;<br />
+</p>
+<p>The <strong>optimizer </strong>object implements the training algorithm and must implement the <a href="api/calhoun/analysis/crf/CRFTraining.html" target="_parent" ><span class="Computer">CRFTraining</span></a> interface. In this case we are using a <a href="api/calhoun/analysis/crf/solver/TwoPassOptimizer.html" target="_parent" ><span class="Computer">TwoPassOptimizer</span></a>. This is a complex object that actually executes two different training algorithms. In the first pass, it performs a maximum likelihood training by using the <a target="_parent"  href="api/calhoun/analysis/crf/solver/StandardOptimizer.html"><span class="Computer">StandardOptimizer</span></a> with a <a  target="_parent" href="api/calhoun/analysis/crf/solver/MaximumLikelihoodSemiMarkovGradient.html"><span class="Computer">MaximumLikelihoodSemiMarkovGradient</span></a>. The <a  target="_parent" href="api/calhoun/analysis/crf/solver/StandardOptimizer.html"><span class="Computer">StandardOptimizer</span></a> performs an L-BFGS optimization and the gradient specifies the function to optimize. In this case it is the likelihood of the training data given the weights. The second pass of the <a  target="_parent" href="api/calhoun/analysis/crf/solver/TwoPassOptimizer.html"><span class="Computer">TwoPassOptimizer</span></a> takes the weights that resulted from the first pass and uses them as a starting point for a maximum expected accuracy training. This is once again done using the <a  target="_parent" href="api/calhoun/analysis/crf/solver/StandardOptimizer.html"><span class="Computer">StandardOptimizer</span></a>, but this time with a different objective function. In this case, it is the <a  target="_parent" href="api/calhoun/analysis/crf/solver/MaximumExpectedAccuracySemiMarkovGradient.html"><span class="Computer">MaximumExpectedAccuracySemiMarkovGradient</span></a>, which is the objective for MEA. The MEA algorithm can further be configured with a custom function to define accuracy, and in this case we are using the <a  target="_parent" href="api/calhoun/analysis/crf/scoring/SimScoreStateAndExonBoundariesInt13.html"><span class="Computer">SimScoreStateAndExonBoundariesInt13</span></a> function. The default is the <a  target="_parent" href="api/calhoun/analysis/crf/scoring/SimScoreMaxStateAgreement.html"><span class="Computer">SimScoreMaxStateAgreement</span></a> function. In addition to the optimizers discussed here, there is also a <a  target="_parent" href="api/calhoun/analysis/crf/solver/FixedWeightOptimizer.html">FixedWeightOptimizer</a> that just sets with weights without training and a <a  target="_parent" href="api/calhoun/analysis/crf/solver/SeededOptimizer.html"><span class="Computer">SeededOptimizer</span></a> that performs an optimization starting with weights read from a separate training file. </p>
+<p class="computerOutput">&nbsp;&nbsp;&lt;bean id=&quot;cache&quot; class=&quot;calhoun.analysis.crf.solver.CacheProcessorDeluxe&quot;&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&lt;property name=&quot;lookbackArraySize&quot; value=&quot;5000&quot;/&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&lt;property name=&quot;lookbackArrayFeatureSize&quot; value=&quot;3&quot;/&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&lt;property name=&quot;ignoreInvalidTrainingData&quot; value=&quot;true&quot;/&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&lt;property name=&quot;semiMarkovSetup&quot;&gt;<br />
+  &nbsp;&nbsp;&nbsp; &lt;bean id=&quot;lengths&quot; class=&quot;calhoun.analysis.crf.SemiMarkovSetup&quot;&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;property name=&quot;ignoreSemiMarkovSelfTransitions&quot; value=&quot;true&quot;/&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;property name=&quot;maxLengths&quot;&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;list&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;value&gt;5000&lt;/value&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;value&gt;5000&lt;/value&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;value&gt;5000&lt;/value&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;value&gt;5000&lt;/value&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;value&gt;600&lt;/value&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;value&gt;600&lt;/value&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;value&gt;600&lt;/value&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;value&gt;5000&lt;/value&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;value&gt;5000&lt;/value&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;value&gt;5000&lt;/value&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;value&gt;600&lt;/value&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;value&gt;600&lt;/value&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;value&gt;600&lt;/value&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/list&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/property&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;property name=&quot;minLengths&quot;&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;list&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;value&gt;18&lt;/value&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;value&gt;5&lt;/value&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;value&gt;5&lt;/value&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;value&gt;5&lt;/value&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;value&gt;15&lt;/value&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;value&gt;15&lt;/value&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;value&gt;15&lt;/value&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;value&gt;5&lt;/value&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;value&gt;5&lt;/value&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;value&gt;5&lt;/value&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;value&gt;15&lt;/value&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;value&gt;15&lt;/value&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;value&gt;15&lt;/value&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/list&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/property&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/bean&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&lt;/property&gt;<br />
+  &nbsp;&nbsp;&lt;/bean&gt;<br />
+</p>
+<p>The <strong>cacheProcessor</strong> is not directly required by Conrad, but the inference and training objects we used both require one to be specified. The <a href="api/calhoun/analysis/crf/solver/CacheProcessorDeluxe.html" target="_parent" ><span class="Computer">CacheProcesorDeluxe</span></a> defined here is the standard object, and it implements the required <a href="api/calhoun/analysis/crf/solver/CacheProcessor.html"  target="_parent" class="Computer">CacheProcessor </a>interface. Among other details, this instance is configured to automatically filter out training data that contains problems, either invalid transitions or states that are too short or too long. By default these will cause the training to fail. The <strong>minLengths</strong> and <strong>maxLength</strong> properties specify what the minimum and maximum allowed segment sizes are for each state. The first number in each list specifies the limits for state 0, the second state 1, etc. The other parameters listed here are defined in the javadoc for <a  target="_parent" href="api/calhoun/analysis/crf/solver/CacheProcessorDeluxe.html"><span class="Computer">CacheProcesorDeluxe</span></a>. </p>
+<p class="computerOutput">&nbsp;&nbsp;&lt;bean id=&quot;model&quot; class=&quot;calhoun.analysis.crf.features.interval13.Interval13Model&quot;&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&lt;property name=&quot;narrowBoundaries&quot; value=&quot;true&quot;/&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&lt;property name=&quot;componentFeatures&quot;&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;list&gt;<br />
+  <br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;!-- First, compute probability of hidden state sequences --&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;bean class=&quot;calhoun.analysis.crf.features.interval13.StateTransitionsInterval13&quot;&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;property name=&quot;inputComponent&quot; value=&quot;ref&quot;/&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/bean&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;bean class=&quot;calhoun.analysis.crf.features.interval13.StateLengthLogprobInterval13&quot;&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;property name=&quot;inputComponent&quot; value=&quot;ref&quot;/&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;property name=&quot;multipleFeatures&quot; value=&quot;true&quot;/&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/bean&gt;<br />
+  <br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;!-- Second, restict to hidden state sequences that, given reference sequence observations, are legal --&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;bean class=&quot;calhoun.analysis.crf.features.interval13.GeneConstraintsInterval13&quot;&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;property name=&quot;inputComponent&quot; value=&quot;ref&quot;/&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/bean&gt;<br />
+  <br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;!-- Third, copmute the probability of emitted ref sequenc egiven hidden state --&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;bean class=&quot;calhoun.analysis.crf.features.interval13.ReferenceBasePredictorInterval13&quot;&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;property name=&quot;inputComponent&quot; value=&quot;ref&quot;/&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;property name=&quot;multipleFeatures&quot; value=&quot;true&quot;/&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/bean&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;bean class=&quot;calhoun.analysis.crf.features.interval13.PWMInterval13&quot; &gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;property name=&quot;inputComponent&quot; value=&quot;ref&quot;/&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;property name=&quot;multipleFeatures&quot; value=&quot;true&quot;/&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/bean&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/list&gt;<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&lt;/property&gt;<br />
+  &nbsp;&nbsp;&lt;/bean&gt;<br />
+  &lt;/beans&gt;<br />
+  </span></p>
+<p>The final, and most important, object is the <strong>model</strong> itself. This object must implement the <a href="api/calhoun/analysis/crf/ModelManager.html" target="_parent" class="Computer">ModelManager</a> interface and in this case we are using the <a target="_parent" href="api/calhoun/analysis/crf/features/interval13/Interval13Model.html"><span class="Computer">Interval13Model</span></a>. In this model the states and transitions are hardcoded into the model class, but the list of feature functions can be customized. For the single species model covered here, there are 5 different feature classes. Each feature class can implement multiple individual feature functions, and so the 5 classes here generate the 22 different feature functions in the single species model. Each feature class must implement on of the <a href="api/calhoun/analysis/crf/FeatureManager.html" target="_parent" ><span class="Computer">FeatureManager</span></a> interfaces. In this case we are using the following features: <a href="api/calhoun/analysis/crf/features/interval13/StateTransitionsInterval13.html" target="_parent" ><span class="Computer">StateTransitionsInterval13</span></a>, <a  target="_parent" href="api/calhoun/analysis/crf/features/interval13/StateLengthLogprobInterval13.html"><span class="Computer">StateLengthLogprobInterval13</span></a>, <a  target="_parent" href="api/calhoun/analysis/crf/features/interval13/GeneConstraintsInterval13.html"><span class="Computer">GeneConstraintsInterval13</span></a>, <a  target="_parent" href="api/calhoun/analysis/crf/features/interval13/ReferenceBasePredictorInterval13.html"><span class="Computer">ReferenceBasePredictorInterval13</span></a>, and <a href="api/calhoun/analysis/crf/features/interval13/PWMInterval13.html" target="_parent" ><span class="Computer">PWMInterval13</span></a>.</p>
+<p>Each feature has it's own configuration. In this case we can see that each of the features is configured to use an <strong>inputComponent</strong> called <span class="Computer">ref</span>.  Looking back to the <strong>inputHandler</strong>section of the config file we can see that this component name was assigned to the sequence of the fasta input file. Therefore, all of these features will get the genomic DNA sequence as thier input observations. This mechanism allows different features to be configured to use different parts of the input data. In addition, so of the features have addiitonal components. In this case, several features have the <strong>multipleFeatures</strong> property. Each of these features has the ability to use a generate a single feature funciton (which then gets assigned a single weight), or multiple feature functions (and therefore multiple weights). Since our testing showed that models with multiple weights had superior performance, we use that option in the default configuration file.</p>
+<p>The final line of the file is always &quot;<span class="Computer">&lt;/beans&gt;</span>&quot; signals the end of the file and is required by XML.</p>
+<h2>Custom configuration </h2>
+<p>Any aspects of the configuration can be changed by changing the XML model file. The new model can then be trained and tested. When Conrad reads processes the XML file, it will create all of the necessary objects. For the default models that ship with Conrad, all of the required Java classes are contained within conrad.jar. You can other classes in the model file that are not in conrad.jar. If you do this you must place the additional classes on the Java classpath so that they can be found when Conrad starts up. You can do this with the -cp option to Java. This is the easiest way to add your own classes to the configuration.</p>
+<p>The Spring configuration format that Conrad uses supports many other advanced features.  Take a look at the <a href="http://static.springframework.org/spring/docs/1.1.5/reference/beans.html" title="Visit page outside Confluence" target="_parent" rel="nofollow">Spring documentation</a> for full details.</p>
+<p>&nbsp;</p>
+</body>
+</html>

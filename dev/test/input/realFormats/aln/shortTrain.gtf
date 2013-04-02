@@ -1,0 +1,4 @@
+seq1	CONRAD	CDS	204	805	.	-	0	gene_id "SEQ_0G_1"; transcript_id "SEQ_0T_1.1";
+seq1	CONRAD	CDS	858	1163	.	-	2	gene_id "SEQ_0G_1"; transcript_id "SEQ_0T_1.1";
+seq1	CONRAD	CDS	1275	1399	.	-	2	gene_id "SEQ_0G_1"; transcript_id "SEQ_0T_1.1";
+seq1	CONRAD	CDS	1459	1775	.	-	2	gene_id "SEQ_0G_1"; transcript_id "SEQ_0T_1.1";

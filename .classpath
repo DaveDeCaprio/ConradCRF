@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="dev/src"/>
+	<classpathentry kind="lib" path="dev/lib/colt.jar"/>
+	<classpathentry kind="lib" path="dev/lib/commons-lang-2.1.jar"/>
+	<classpathentry kind="lib" path="dev/lib/commons-logging.jar"/>
+	<classpathentry kind="lib" path="dev/lib/commons-math-1.1.jar"/>
+	<classpathentry kind="lib" path="dev/lib/dom4j.jar"/>
+	<classpathentry kind="lib" path="dev/lib/jcommon-1.0.6.jar"/>
+	<classpathentry kind="lib" path="dev/lib/jfreechart-1.0.3.jar"/>
+	<classpathentry kind="lib" path="dev/lib/junit.jar"/>
+	<classpathentry kind="lib" path="dev/lib/LBFGS.jar"/>
+	<classpathentry kind="lib" path="dev/lib/spring-1.2.6.jar"/>
+	<classpathentry kind="lib" path="lib/colt.jar"/>
+	<classpathentry kind="lib" path="lib/commons-lang-2.1.jar"/>
+	<classpathentry kind="lib" path="lib/commons-logging.jar"/>
+	<classpathentry kind="lib" path="lib/conrad.jar"/>
+	<classpathentry kind="lib" path="lib/dom4j.jar"/>
+	<classpathentry kind="lib" path="lib/LBFGS.jar"/>
+	<classpathentry kind="lib" path="lib/spring-1.2.6.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

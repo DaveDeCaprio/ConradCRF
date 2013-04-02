@@ -1,0 +1,12 @@
+SEQ_0	CONRAD	start_codon	501	503	.	+	0	gene_id "SEQ_0G_1"; transcript_id "SEQ_0T_1.1";
+SEQ_0	CONRAD	CDS	501	636	.	+	0	gene_id "SEQ_0G_1"; transcript_id "SEQ_0T_1.1";
+SEQ_0	CONRAD	CDS	712	1404	.	+	2	gene_id "SEQ_0G_1"; transcript_id "SEQ_0T_1.1";
+SEQ_0	CONRAD	CDS	1610	3093	.	+	2	gene_id "SEQ_0G_1"; transcript_id "SEQ_0T_1.1";
+SEQ_0	CONRAD	CDS	3450	3692	.	+	0	gene_id "SEQ_0G_1"; transcript_id "SEQ_0T_1.1";
+SEQ_0	CONRAD	CDS	4160	4222	.	+	0	gene_id "SEQ_0G_1"; transcript_id "SEQ_0T_1.1";
+SEQ_0	CONRAD	stop_codon	4223	4225	.	+	0	gene_id "SEQ_0G_1"; transcript_id "SEQ_0T_1.1";
+SEQ_0	CONRAD	stop_codon	5155	5157	.	-	0	gene_id "SEQ_0G_2"; transcript_id "SEQ_0T_2.1";
+SEQ_0	CONRAD	CDS	5158	5221	.	-	0	gene_id "SEQ_0G_2"; transcript_id "SEQ_0T_2.1";
+SEQ_0	CONRAD	CDS	5669	5829	.	-	2	gene_id "SEQ_0G_2"; transcript_id "SEQ_0T_2.1";
+SEQ_0	CONRAD	CDS	6149	6235	.	-	0	gene_id "SEQ_0G_2"; transcript_id "SEQ_0T_2.1";
+SEQ_0	CONRAD	start_codon	6233	6235	.	-	0	gene_id "SEQ_0G_2"; transcript_id "SEQ_0T_2.1";
